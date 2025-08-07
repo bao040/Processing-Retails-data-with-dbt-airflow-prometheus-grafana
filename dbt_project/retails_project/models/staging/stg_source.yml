@@ -1,0 +1,30 @@
+version: 2
+
+sources:
+  - name: raw_retails
+    schema: raw_retails_data  
+    database: airflow          
+    tables:
+      - name: raw_brands
+      - name: raw_categories
+      - name: raw_loyalty_programs
+      - name: raw_suppliers
+      - name: raw_promotions
+      - name: raw_campaigns
+      - name: raw_customers
+      - name: raw_products
+      - name: raw_stores
+      - name: raw_employees
+      - name: raw_payments
+      - name: raw_sales_transactions
+      - name: raw_sales_items
+      - name: raw_inventory
+      - name: raw_stock_movements
+      - name: raw_purchase_orders
+      - name: raw_shipments
+      - name: raw_returns
+      - name: raw_customer_feedback
+      - name: raw_store_visits
+      - name: raw_pricing_history
+      - name: raw_discount_rules
+      - name: raw_tax_rules

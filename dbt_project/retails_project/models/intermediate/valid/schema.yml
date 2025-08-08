@@ -1,0 +1,571 @@
+version: 2
+
+models:
+
+  - name: int_customers
+    columns:
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+      - name: email
+        tests:
+          - not_null
+          - valid_email
+      - name: phone
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "char_length(phone) = 10"
+      - name: loyalty_program_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_loyalty_programs')
+              field: loyalty_program_id
+      - name: created_at
+        tests:
+          - expression_is_true:
+              expression: "created_at <= current_timestamp"
+
+  - name: int_stores
+    columns:
+      - name: store_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+      - name: location
+        tests:
+          - not_null
+      - name: manager_id
+        tests:
+          - not_null
+
+  - name: int_employees
+    columns:
+      - name: employee_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+      - name: role
+        tests:
+          - not_null
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+
+  - name: int_products
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+      - name: category_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_categories')
+              field: category_id
+      - name: brand_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_brands')
+              field: brand_id
+      - name: supplier_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_suppliers')
+              field: supplier_id
+      - name: price
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "price >= 0"
+      - name: created_at
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "created_at <= current_timestamp"
+      - name: season
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Spring', 'Summer', 'Autumn', 'Winter', 'All Year']
+
+  - name: int_categories
+    columns:
+      - name: category_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+
+  - name: int_brands
+    columns:
+      - name: brand_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+
+  - name: int_suppliers
+    columns:
+      - name: brand_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+      - name: contact_info
+        tests:
+          - not_null
+
+  - name: int_loyalty_programs
+    columns:
+      - name: loyalty_program_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+      - name: points_per_dollar
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "points_per_dollar > 0"
+
+  - name: int_sales_transactions
+    columns:
+      - name: transaction_id
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_customers')
+              field: customer_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+      - name: employee_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_employees')
+              field: employee_id
+      - name: transaction_date
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "transaction_date <= current_date"
+      - name: total_amount
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "total_amount >= 0"
+      - name: payment_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_payments')
+              field: payment_id
+
+  - name: int_sales_items
+    columns:
+      - name: item_id
+        tests:
+          - not_null
+          - unique
+      - name: transaction_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_sales_transactions')
+              field: transaction_id
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+      - name: quantity
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "quantity >= 0"
+      - name: unit_price
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "unit_price >= 0"
+      - name: discount
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "discount >= 0"
+      - name: tax
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "tax >= 0"
+
+  - name: int_payments
+    columns:
+      - name: payment_id
+        tests:
+          - not_null
+          - unique
+      - name: method
+        tests:
+          - not_null
+      - name: status
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Pending', 'Completed']
+      - name: paid_at
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "paid_at <= current_date"
+
+  - name: int_inventory
+    columns:
+      - name: inventory_id
+        tests:
+          - not_null
+          - unique
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+      - name: quantity
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "quantity >= 0"
+      - name: last_updated
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "last_updated <= current_timestamp"
+
+  - name: int_stock_movements
+    columns:
+      - name: movement_id
+        tests:
+          - not_null
+          - unique
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+      - name: movement_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['IN', 'OUT', 'TRANSFER']
+      - name: quantity
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "quantity >= 0"
+      - name: movement_date
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "movement_date <= current_date"
+
+  - name: int_purchase_orders
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+      - name: supplier_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_suppliers')
+              field: supplier_id
+      - name: order_date
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "order_date <= current_date"
+
+  - name: int_shipments
+    columns:
+      - name: shipment_id
+        tests:
+          - not_null
+          - unique
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_purchase_orders')
+              field: order_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+      - name: shipped_date
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "shipped_date <= current_date"
+      - name: received_date
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "received_date <= shipped_date + interval '45 days'"
+
+  - name: int_returns
+    columns:
+      - name: return_id
+        tests:
+          - not_null
+          - unique
+      - name: item_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_sales_items')
+              field: item_id
+      - name: reason
+        tests:
+          - not_null
+
+  - name: int_promotions
+    columns:
+      - name: promotion_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+      - name: start_date
+        tests:
+          - not_null
+      - name: end_date
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "start_date <= end_date"
+
+  - name: int_campaigns
+    columns:
+      - name: campaign_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+      - name: budget
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "budget > 0"
+      - name: start_date
+        tests:
+          - not_null
+      - name: end_date
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "start_date <= end_date"
+
+  - name: int_customer_feedback
+    columns:
+      - name: feedback_id
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_customers')
+              field: customer_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+      - name: rating
+        tests:
+          - expression_is_true:
+              expression: "rating::int >= 0"
+      - name: comments
+        tests:
+          - not_null
+      - name: feedback_date
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "feedback_date <= current_date"
+
+  - name: int_store_visits
+    columns:
+      - name: visit_id
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_customers')
+              field: customer_id
+      - name: store_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+      - name: visit_date
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "visit_date <= current_date"
+
+  - name: int_pricing_history
+    columns:
+      - name: history_id
+        tests:
+          - not_null
+          - unique
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+      - name: price
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "price >= 0"
+      - name: effective_date
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "effective_date <= current_timestamp"
+
+  - name: int_discount_rules
+    columns:
+      - name: rule_id
+        tests:
+          - not_null
+          - unique
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+      - name: discount_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['percentage', 'fixed']
+      - name: value
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "value >= 0"
+      - name: valid_from
+        tests:
+          - not_null
+      - name: valid_to
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "valid_from <= valid_to"
+
+  - name: int_tax_rules
+    columns:
+      - name: tax_id
+        tests:
+          - not_null
+          - unique
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+      - name: tax_rate
+        tests:
+          - not_null
+          - expression_is_true:
+              expression: "tax_rate >= 0"
+      - name: region
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['West', 'East', 'South', 'North']
+
+
+
+
+
+
+
+

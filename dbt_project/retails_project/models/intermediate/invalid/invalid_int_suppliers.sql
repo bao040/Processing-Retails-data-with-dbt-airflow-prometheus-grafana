@@ -3,15 +3,15 @@
 ) }}
 
 with source as (
-    select * from {{ ref('stg_suppliers') }}
+    select * from {{ ref('snapshot_suppliers') }}
 ),
 
 flagged as (
     select
-        brand_id,
+        supplier_id,
         name,
         contact_info,
-        case when brand_id is null then 'Missing brand_id' else null end as err_brand_id,
+        case when supplier_id is null then 'Missing supplier_id' else null end as err_supplier_id,
         case when name is null then 'Missing name' else null end as err_name,
         case when contact_info is null then 'Missing contact_info' else null end as err_contact_info
     from source
@@ -19,12 +19,12 @@ flagged as (
 
 invalid as (
     select
-        brand_id,
+        supplier_id,
         name,
         contact_info,
         array_to_string(
             array_remove(array[
-                err_brand_id,
+                err_supplier_id,
                 err_name,
                 err_contact_info
             ], null),
@@ -32,7 +32,7 @@ invalid as (
         ) as error_reason
     from flagged
     where
-        err_brand_id is not null
+        err_supplier_id is not null
         or err_name is not null
         or err_contact_info is not null
 )

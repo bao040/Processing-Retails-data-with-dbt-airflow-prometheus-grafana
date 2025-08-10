@@ -1,10 +1,12 @@
 {{ config(
     materialized='incremental',
-    strategy='merge'
+    unique_key = 'inventory_id',
+  
+    incremental_strategy = 'merge'
 ) }}
 
 with source as (
-    select * from {{ ref('stg_inventory') }}
+    select * from {{ ref('snapshot_inventory') }}
 ),
 
 flagged as (

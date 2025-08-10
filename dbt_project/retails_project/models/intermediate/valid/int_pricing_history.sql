@@ -1,10 +1,12 @@
 {{ config(
     materialized='incremental',
-    strategy='merge'
+    unique_key = 'history_id',
+  
+    incremental_strategy = 'merge'
 ) }}
 
 with source as (
-    select * from {{ ref('stg_pricing_history') }}
+    select * from {{ ref('snapshot_pricing_history') }}
 ),
 
 valid_prices as (

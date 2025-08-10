@@ -33,12 +33,18 @@ models:
   retails_project:
     # Config indicated by + and applies to all files under models/example/
     staging:
-      # +schema: raw_retails_data    #nếu đặt sẽ bị trùng schema với profiles.yml
+      +schema: raw_retails_data    #nếu đặt sẽ bị trùng schema với profiles.yml
       +materialized: table
-    silver_cleaned:
-      # +schema: silver_retails_data
-      +materialized: table
-    
+    # silver_cleaned:
+    #   +schema: silver_retails_data
+    #   +materialized: table
+    intermediate:
+      valid:
+        +schema: silver_valid_data
+        +materialized: table
+      invalid:
+        +schema: invalid_data
+        +materialized: table
     
     
     

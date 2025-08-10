@@ -3,7 +3,7 @@ version: 2
 sources:
   - name: raw_retails
     schema: raw_retails_data  
-    database: airflow          
+    database: airflow15          
     tables:
       - name: raw_brands
       - name: raw_categories

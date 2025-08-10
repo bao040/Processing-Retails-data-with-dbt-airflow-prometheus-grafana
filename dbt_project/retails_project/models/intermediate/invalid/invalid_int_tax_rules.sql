@@ -3,7 +3,7 @@
 ) }}
 
 with source as (
-    select * from {{ ref('stg_tax_rules') }}
+    select * from {{ ref('snapshot_tax_rules') }}
 ),
 
 flagged as (
@@ -15,10 +15,16 @@ flagged as (
 
         case when tax_id is null then 'Missing tax_id' else null end as err_id,
         case when product_id is null then 'Missing product_id' else null end as err_product,
-        case when tax_rate is null then 'Missing tax_rate'
-             when tax_rate < 0 then 'Negative tax_rate' else null end as err_rate,
-        case when region is null then 'Missing region'
-             when region not in ('West', 'East', 'South', 'North') then 'Invalid region' else null end as err_region
+        case 
+            when tax_rate is null then 'Missing tax_rate'
+            when tax_rate ~ '^[-+]?[0-9]*\.?[0-9]+$' and cast(tax_rate as numeric) < 0 then 'Negative tax_rate'
+            else null
+        end as err_rate,
+        case 
+            when region is null then 'Missing region'
+            when region not in ('West', 'East', 'South', 'North') then 'Invalid region'
+            else null
+        end as err_region
 
     from source
 ),

@@ -1,6 +1,7 @@
 {{ config(
     materialized='incremental',
-    strategy='merge'
+    unique_key = 'feedback_id',
+    incremental_strategy = 'merge'
 ) }}
 
 with source as (
@@ -14,10 +15,10 @@ cleaned as (
         customer_id,
         store_id,
         product_id,
-        -- Chuyển "bad" thành 0
         case 
             when rating = 'bad' then 0
-            else try_cast(rating as int) 
+            when rating ~ '^\d+$' then cast(rating as int)
+            else null
         end as rating,
         comments,
         feedback_date

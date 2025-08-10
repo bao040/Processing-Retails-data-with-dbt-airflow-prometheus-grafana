@@ -1,12 +1,13 @@
 retails_project:
   outputs:
     dev:
-      dbname: airflow
+      dbname: airflow15   #airflow
       host: postgres
-      pass: airflow
+      pass: airflow15  #airflow
       port: 5432
-      schema: public
+      schema: ''
       threads: 1
       type: postgres
-      user: airflow
+      user: airflow15  #airflow
   target: dev
+

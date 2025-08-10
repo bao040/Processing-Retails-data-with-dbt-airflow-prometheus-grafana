@@ -56,8 +56,8 @@ x-airflow-common:
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow15:airflow15@postgres/airflow15 #AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow15:airflow15@postgres/airflow15 #AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
@@ -110,15 +110,15 @@ services:
 
 
   postgres:
-    image: postgres:13
+    image: postgres:15  # 13
     environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
+      POSTGRES_USER: airflow15  #airflow
+      POSTGRES_PASSWORD: airflow15   #airflow
+      POSTGRES_DB: airflow15 #airflow
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
     ports:
-      - "5434:5432"
+      - "5435:5432"  #5434
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s

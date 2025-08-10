@@ -3,17 +3,17 @@
 ) }}
 
 with source as (
-    select * from {{ ref('stg_suppliers') }}
+    select * from {{ ref('snapshot_suppliers') }}
 ),
 
 valid_suppliers as (
     select
-        brand_id,
+        supplier_id,
         name,
         contact_info
     from source
     where
-        brand_id is not null
+        supplier_id is not null
         and name is not null
         and contact_info is not null
 )

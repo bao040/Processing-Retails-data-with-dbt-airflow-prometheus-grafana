@@ -1,7 +1,10 @@
 {{ config(
     materialized='incremental',
-    strategy='merge'
+    unique_key = 'feedback_id',
+  
+    incremental_strategy = 'merge'
 ) }}
+
 
 with source as (
     select * from {{ ref('stg_customer_feedback') }}

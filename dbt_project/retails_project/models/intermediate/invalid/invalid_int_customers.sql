@@ -1,6 +1,8 @@
 {{ config(
     materialized='incremental',
-    strategy='merge'
+    unique_key = 'customer_id',
+  
+    incremental_strategy = 'merge'
 ) }}
 
 with source as (

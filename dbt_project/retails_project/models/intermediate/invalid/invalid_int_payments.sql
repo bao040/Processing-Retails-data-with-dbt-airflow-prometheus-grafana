@@ -46,7 +46,7 @@ invalid as (
                 err_paid_at
             ], null),
             '; '
-        ) as error_reason
+        ) as invalid_description
     from flagged
     where
         err_id is not null

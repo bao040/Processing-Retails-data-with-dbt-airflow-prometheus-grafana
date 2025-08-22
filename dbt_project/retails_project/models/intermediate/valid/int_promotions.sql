@@ -11,14 +11,16 @@ valid_promotions as (
         promotion_id,
         name,
         start_date,
-        end_date
+        end_date,
+        case
+            when start_date is null and end_date is null then 'ONGOING_NO_DATES'
+            when start_date > current_date then 'UPCOMING'
+            when (start_date is null or start_date <= current_date)
+                 and (end_date is null or end_date >= current_date) then 'ACTIVE'
+            when end_date < current_date then 'EXPIRED'
+            else 'UNKNOWN'
+        end as promotion_status
     from source
-    where
-        promotion_id is not null
-        and name is not null
-        and start_date is not null
-        and end_date is not null
-        and start_date <= end_date
 )
 
 select * from valid_promotions

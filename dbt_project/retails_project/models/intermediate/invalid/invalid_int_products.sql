@@ -73,7 +73,7 @@ invalid as (
                 err_season
             ], null),
             '; '
-        ) as error_reason
+        ) as invalid_description
     from flagged
     where
         err_product_id is not null

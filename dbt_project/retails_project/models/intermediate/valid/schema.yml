@@ -3,565 +3,801 @@ version: 2
 models:
 
   - name: int_customers
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: customer_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
       - name: name
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: email
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - valid_email:
               column_name: email
+              severity: error
       - name: phone
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "char_length(phone) = 10"
+              severity: error
       - name: loyalty_program_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_loyalty_programs')
-          #     field: loyalty_program_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_loyalty_programs')
+              field: loyalty_program_id
+              severity: warn
       - name: created_at
         data_tests:
           - expression_is_true:
               expression: "created_at <= current_timestamp"
+              severity: error
 
   - name: int_stores
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: store_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
       - name: name
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: location
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: manager_id
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
 
   - name: int_employees
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: employee_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
       - name: name
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: role
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: store_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_stores')
-          #     field: store_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+              severity: warn
 
   - name: int_products
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: product_id
         data_tests:
-          - not_null
-          - unique
-      - name: name
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
+      - name: product_name
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: category_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_categories')
-          #     field: category_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_categories')
+              field: category_id
+              severity: warn
       - name: brand_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_brands')
-          #     field: brand_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_brands')
+              field: brand_id
+              severity: warn
       - name: supplier_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_suppliers')
-          #     field: supplier_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_suppliers')
+              field: supplier_id
+              severity: warn
       - name: price
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "price >= 0"
+              severity: warn
       - name: created_at
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "created_at <= current_timestamp"
+              severity: error
       - name: season
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - accepted_values:
               values: ['Spring', 'Summer', 'Autumn', 'Winter', 'All Year']
+              severity: error
 
   - name: int_categories
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: category_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
       - name: name
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
 
   - name: int_brands
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: brand_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
       - name: name
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
 
   - name: int_suppliers
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: supplier_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
       - name: name
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: contact_info
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
 
   - name: int_loyalty_programs
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: loyalty_program_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
       - name: name
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: points_per_dollar
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "points_per_dollar > 0"
-
+              severity: error
   - name: int_sales_transactions
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: transaction_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
       - name: customer_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_customers')
-          #     field: customer_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_customers')
+              field: customer_id
+              severity: warn
       - name: store_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_stores')
-          #     field: store_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+              severity: warn
       - name: employee_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_employees')
-          #     field: employee_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_employees')
+              field: employee_id
+              severity: warn
       - name: transaction_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "transaction_date <= current_date"
+              severity: error
       - name: total_amount
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "total_amount >= 0"
+              severity: error
       - name: payment_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_payments')
-          #     field: payment_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_payments')
+              field: payment_id
+              severity: warn
 
   - name: int_sales_items
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: item_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error  
       - name: transaction_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_sales_transactions')
-          #     field: transaction_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_sales_transactions')
+              field: transaction_id
+              severity: warn
       - name: product_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_products')
-          #     field: product_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+              severity: warn
       - name: quantity
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "quantity >= 0"
+              severity: error
       - name: unit_price
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "unit_price >= 0"
+              severity: error
       - name: discount
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "discount >= 0"
+              severity: error
       - name: tax
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "tax >= 0"
+              severity: error
 
   - name: int_payments
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: payment_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
       - name: method
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: status
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - accepted_values:
               values: ['Pending', 'Completed']
+              severity: error
       - name: paid_at
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "paid_at <= current_date"
+              severity: error
 
   - name: int_inventory
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: inventory_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
+          #     severity: warn
       - name: store_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_stores')
-          #     field: store_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+              severity: warn
       - name: product_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_products')
-          #     field: product_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+              severity: warn
       - name: quantity
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "quantity >= 0"
+              severity: error
       - name: last_updated
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "last_updated <= current_timestamp"
+              severity: error
 
   - name: int_stock_movements
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: movement_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: product_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_products')
-          #     field: product_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+              severity: warn
       - name: store_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_stores')
-          #     field: store_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+              severity: warn
       - name: movement_type
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - accepted_values:
               values: ['IN', 'OUT', 'TRANSFER']
+              severity: error
       - name: quantity
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "quantity >= 0"
+              severity: error
       - name: movement_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "movement_date <= current_date"
+              severity: error
 
   - name: int_purchase_orders
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: order_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: supplier_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_suppliers')
-          #     field: supplier_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_suppliers')
+              field: supplier_id
+              severity: warn
       - name: order_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "order_date <= current_date"
+              severity: error
 
   - name: int_shipments
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: shipment_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: order_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_purchase_orders')
-          #     field: order_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_purchase_orders')
+              field: order_id
+              severity: warn
       - name: store_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_stores')
-          #     field: store_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+              severity: warn
       - name: shipped_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "shipped_date <= current_date"
+              severity: error
       - name: received_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "received_date <= shipped_date + interval '45 days'"
+              severity: warn
 
   - name: int_returns
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: return_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: item_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_sales_items')
-          #     field: item_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_sales_items')
+              field: item_id
+              severity: warn
       - name: reason
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
 
   - name: int_promotions
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: promotion_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: name
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: start_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
+          - expression_is_true:
+              expression: "start_date <= current_date"
+              severity: error
       - name: end_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "start_date <= end_date"
+              severity: error
+          - expression_is_true:
+              expression: "end_date <= current_date"
+              severity: error
 
   - name: int_campaigns
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: campaign_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: name
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: budget
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
-              expression: "cast(budget as numeric) > 0"
+              expression: "cast(budget as numeric) >= 0"
+              severity: error
       - name: start_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
+          - expression_is_true:
+              expression: "start_date <= current_date"
+              severity: error
+          
       - name: end_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "start_date <= end_date"
+              severity: error
+          - expression_is_true:
+              expression: "end_date <= current_date"
+              severity: error
 
   - name: int_customer_feedback
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: feedback_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: customer_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_customers')
-          #     field: customer_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_customers')
+              field: customer_id
+              severity: warn
       - name: store_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_stores')
-          #     field: store_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+              severity: warn
       - name: product_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_products')
-          #     field: product_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+              severity: warn
       - name: rating
         data_tests:
           - expression_is_true:
               expression: "rating::int >= 0"
+              severity: error
       - name: comments
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: feedback_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "feedback_date <= current_date"
+              severity: error
 
   - name: int_store_visits
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: visit_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: customer_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_customers')
-          #     field: customer_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_customers')
+              field: customer_id
+              severity: warn
       - name: store_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_stores')
-          #     field: store_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+              severity: warn
       - name: visit_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "visit_date <= current_date"
+              severity: error
 
   - name: int_pricing_history
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: history_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: product_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_products')
-          #     field: product_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+              severity: warn
       - name: price
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "price >= 0"
+              severity: error
       - name: effective_date
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "effective_date <= current_timestamp"
+              severity: error
 
   - name: int_discount_rules
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: rule_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: product_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_products')
-          #     field: product_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+              severity: warn
       - name: discount_type
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - accepted_values:
               values: ['percentage', 'fixed']
+              severity: error
       - name: value
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "value >= 0"
+              severity: error
       - name: valid_from
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
       - name: valid_to
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "valid_from <= valid_to"
+              severity: error
 
   - name: int_tax_rules
+    tags: ['intermediate', 'cleaning']
     columns:
       - name: tax_id
         data_tests:
-          - not_null
-          - unique
+          - not_null:
+              severity: error
+          - unique:
+              severity: error
       - name: product_id
         data_tests:
-          - not_null
-          # - relationships:
-          #     to: ref('int_products')
-          #     field: product_id
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+              severity: warn
       - name: tax_rate
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - expression_is_true:
               expression: "cast(tax_rate as numeric) >= 0"
+              severity: error
       - name: region
         data_tests:
-          - not_null
+          - not_null:
+              severity: warn
           - accepted_values:
               values: ['West', 'East', 'South', 'North']
+              severity: error
 
 
 

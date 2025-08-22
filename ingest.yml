@@ -1,0 +1,26 @@
+source:
+  type: postgres
+  config:
+    host_port: "localhost:5432"
+    database: piidb
+    username: piiuser
+    password: p11secret
+
+    schema_pattern:
+      allow: [".*"]
+      deny: ["^information_schema.*"]
+
+    include_tables: true
+    include_views: true
+
+    profiling:
+      enabled: true
+      profile_table_level_only: false  # Bật profiling cấp cột
+      max_number_of_fields_to_profile: 100  # Tùy chỉnh số cột tối đa để profiling
+      field_sample_values_limit: 20  # Giới hạn số giá trị mẫu
+      sample_size: 10000  # Kích thước mẫu để profiling
+
+sink:
+  type: datahub-rest
+  config:
+    server: "http://localhost:8080"

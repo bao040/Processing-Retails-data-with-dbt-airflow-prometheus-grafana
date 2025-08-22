@@ -1,8 +1,5 @@
 {{ config(
-    materialized='incremental',
-    unique_key = 'order_id',
-  
-    incremental_strategy = 'merge'
+    materialized='view'
 ) }}
 
 with source as (
@@ -15,11 +12,6 @@ valid_purchase_orders as (
         supplier_id,
         order_date
     from source
-    where
-        order_id is not null
-        and supplier_id is not null
-        and order_date is not null
-        and order_date <= current_date
 )
 
 select * from valid_purchase_orders

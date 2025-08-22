@@ -12,15 +12,18 @@ valid_campaigns as (
         name,
         budget,
         start_date,
-        end_date
+        end_date,
+        case
+            when start_date is not null and end_date is not null
+            then end_date - start_date
+            else null
+        end as duration
     from source
-    where
-        campaign_id is not null
-        and name is not null
-        and budget is not null and budget > 0
-        and start_date is not null
-        and end_date is not null
-        and start_date <= end_date
+    where 
+        start_date is null
+        or end_date is null
+        or start_date <= end_date
 )
 
 select * from valid_campaigns
+

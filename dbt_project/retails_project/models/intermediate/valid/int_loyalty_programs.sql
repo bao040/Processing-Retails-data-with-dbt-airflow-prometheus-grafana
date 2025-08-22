@@ -10,13 +10,16 @@ valid_loyalty_programs as (
     select
         loyalty_program_id,
         name,
-        points_per_dollar
+        points_per_dollar,
+
+        -- Tier classification (example logic)
+        case
+            when points_per_dollar >= 8 then 'Gold'
+            when points_per_dollar >= 5 then 'Silver'
+            else 'Bronze'
+        end as tier
+
     from source
-    where
-        loyalty_program_id is not null
-        and name is not null
-        and points_per_dollar is not null
-        and points_per_dollar > 0
 )
 
 select * from valid_loyalty_programs

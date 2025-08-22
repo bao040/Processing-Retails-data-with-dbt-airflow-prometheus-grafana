@@ -44,7 +44,7 @@ invalid as (
                 null
             ),
             '; '
-        ) as error_reason
+        ) as invalid_description
 
     from flagged
     where

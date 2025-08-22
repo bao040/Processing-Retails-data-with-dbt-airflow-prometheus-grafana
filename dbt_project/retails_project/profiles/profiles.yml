@@ -5,7 +5,7 @@ retails_project:
       host: postgres
       pass: airflow15  #airflow
       port: 5432
-      schema: ''
+      schema: 'pos'
       threads: 1
       type: postgres
       user: airflow15  #airflow

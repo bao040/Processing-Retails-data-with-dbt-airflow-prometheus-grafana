@@ -1,8 +1,5 @@
 {{ config(
-    materialized='incremental',
-    unique_key = 'transaction_id',
-  
-    incremental_strategy = 'merge'
+    materialized='view'
 ) }}
 
 with source as (
@@ -16,17 +13,9 @@ valid_sales_transactions as (
         store_id,
         employee_id,
         transaction_date,
-        total_amount,
+        case when total_amount < 0 then null else total_amount end as total_amount,
         payment_id
     from source
-    where
-        transaction_id is not null
-        and customer_id is not null
-        and store_id is not null
-        and employee_id is not null
-        and transaction_date is not null and transaction_date <= current_date
-        and total_amount is not null and total_amount >= 0
-        and payment_id is not null
 )
 
 select * from valid_sales_transactions

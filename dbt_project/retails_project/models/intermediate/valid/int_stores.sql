@@ -4,6 +4,7 @@
 
 with source as (
     select * from {{ ref('snapshot_stores') }}
+    where dbt_valid_to is null
 ),
 
 cleaned as (
@@ -15,12 +16,6 @@ cleaned as (
         manager_id
 
     from source
-    where
-        store_id is not null
-        and name is not null
-        and location is not null
-        and manager_id is not null
-
 )
 
 select * from cleaned

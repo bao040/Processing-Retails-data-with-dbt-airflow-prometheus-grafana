@@ -3,44 +3,29 @@
 ) }}
 
 with source as (
-    select * from {{ ref('snapshot_products') }}
-),
-
-valid_categories as (
-    select category_id from {{ ref('int_categories') }}
-),
-
-valid_brands as (
-    select brand_id from {{ ref('int_brands') }}
-),
-
-valid_suppliers as (
-    select supplier_id from {{ ref('int_suppliers') }}
+    select * 
+    from {{ ref('snapshot_products') }}
+    where dbt_valid_to is null
 ),
 
 valid_products as (
     select
-        s.product_id,
-        s.name,
-        s.category_id,
-        s.brand_id,
-        s.supplier_id,
-        s.price,
-        s.created_at,
-        s.season
-    from source s
-    inner join valid_categories c on s.category_id = c.category_id
-    inner join valid_brands b on s.brand_id = b.brand_id
-    inner join valid_suppliers sp on s.supplier_id = sp.supplier_id
-    where
-        s.product_id is not null
-        and s.name is not null
-        and s.category_id is not null
-        and s.brand_id is not null
-        and s.supplier_id is not null
-        and s.price is not null and s.price >= 0
-        and s.created_at is not null and s.created_at <= current_timestamp
-        and s.season in ('Spring', 'Summer', 'Autumn', 'Winter', 'All Year')
+        product_id,
+        trim(name) as product_name,
+        category_id,
+        brand_id,
+        supplier_id,
+        price,
+        created_at,
+        trim(season) as season,
+
+        case 
+            when created_at is not null 
+            then current_date - created_at::date
+        end as product_age_days
+
+    from source
 )
 
-select * from valid_products
+select * 
+from valid_products

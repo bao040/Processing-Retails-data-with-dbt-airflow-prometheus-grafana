@@ -1,8 +1,5 @@
 {{ config(
-    materialized='incremental',
-    unique_key = 'movement_id',
-  
-    incremental_strategy = 'merge'
+    materialized='view'
 ) }}
 
 with source as (
@@ -14,17 +11,22 @@ valid_stock_movements as (
         movement_id,
         product_id,
         store_id,
-        movement_type,
-        quantity,
-        movement_date
+        case 
+            when upper(movement_type) in ('IN', 'OUT', 'TRANSFER') 
+                then upper(movement_type)
+            else null
+        end as movement_type,
+
+        case
+            when quantity >= 0 then quantity
+            else null
+        end as quantity,
+        
+        case 
+            when movement_date <= current_date then movement_date
+            else null
+        end as movement_date
     from source
-    where
-        movement_id is not null
-        and product_id is not null
-        and store_id is not null
-        and movement_type in ('IN', 'OUT', 'TRANSFER')
-        and quantity is not null and quantity >= 0
-        and movement_date is not null and movement_date <= current_date
 )
 
 select * from valid_stock_movements

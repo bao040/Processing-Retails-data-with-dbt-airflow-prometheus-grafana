@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: stg_categories
+    tags: ['staging']
+
+  - name: stg_brands
+    tags: ['staging']
+
+  - name: stg_loyalty_programs
+    tags: ['staging']
+
+  - name: stg_sales_transactions
+    tags: ['staging']
+
+  - name: stg_sales_items
+    tags: ['staging']
+
+  - name: stg_payments
+    tags: ['staging']
+
+  - name: stg_stock_movements
+    tags: ['staging']
+
+  - name: stg_purchase_orders
+    tags: ['staging']
+
+  - name: stg_shipments
+    tags: ['staging']
+
+  - name: stg_returns
+    tags: ['staging']
+
+  - name: stg_promotions
+    tags: ['staging']
+
+  - name: stg_campaigns
+    tags: ['staging']
+
+  - name: stg_customer_feedback
+    tags: ['staging']
+
+  - name: stg_store_visits
+    tags: ['staging']
+
+  - name: stg_discount_rules
+    tags: ['staging']
+
+
+
+
+
+
+
+
+
+
+

@@ -60,7 +60,7 @@ invalid as (
                 err_future
             ], null),
             '; '
-        ) as error_reason
+        ) as invalid_description
     from flagged
     where
         err_id is not null

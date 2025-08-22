@@ -1,8 +1,5 @@
 {{ config(
-    materialized='incremental',
-    unique_key = 'visit_id',
-  
-    incremental_strategy = 'merge'
+    materialized='view'
 ) }}
 
 with source as (
@@ -14,14 +11,11 @@ valid_visits as (
         visit_id,
         customer_id,
         store_id,
-        visit_date
+        case 
+            when visit_date <= current_date then visit_date
+            else null
+        end as visit_date
     from source
-    where
-        visit_id is not null
-        and customer_id is not null
-        and store_id is not null
-        and visit_date is not null
-        and visit_date <= current_date
 )
 
 select * from valid_visits

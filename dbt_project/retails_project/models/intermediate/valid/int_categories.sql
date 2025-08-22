@@ -11,9 +11,6 @@ valid_categories as (
         category_id,
         name
     from source
-    where
-        category_id is not null
-        and name is not null
 )
 
 select * from valid_categories

@@ -25,7 +25,7 @@ invalid as (
                 err_name
             ], null),
             '; '
-        ) as error_reason
+        ) as invalid_description
     from flagged
     where
         err_brand_id is not null

@@ -1,0 +1,450 @@
+version: 2
+
+models:
+   # ===================== INVENTORY =====================
+  - name: fact_inventory_movements
+    description: "Fact table tracking stock movements, shipments, and purchase orders"
+    columns:
+      - name: movement_id
+        description: "Unique identifier for each stock movement"
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: product_id
+        description: "Product being moved"
+        tests:
+          - not_null:
+              severity: warn
+      - name: store_id
+        description: "Store where movement occurred"
+        tests:
+          - not_null:
+              severity: warn
+      - name: movement_date
+        description: "Date of stock movement"
+        tests:
+          - not_null:
+              severity: warn
+      - name: shipment_id
+        description: "Associated shipment, if applicable"
+        tests:
+          - relationships:
+              to: ref('int_shipments')
+              field: shipment_id
+              severity: warn
+      - name: order_id
+        description: "Associated purchase order, if applicable"
+        tests:
+          - relationships:
+              to: ref('int_purchase_orders')
+              field: order_id
+              severity: warn
+      - name: stock_in
+        description: "Quantity added to inventory"
+      - name: stock_out
+        description: "Quantity removed from inventory"
+      - name: stock_transfer
+        description: "Quantity transferred between stores"
+
+  - name: dim_suppliers
+    description: "Supplier dimension"
+    columns:
+      - name: supplier_id
+        description: "Unique supplier identifier"
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: supplier_name
+        description: "Supplier name"
+        tests:
+          - not_null:
+              severity: warn
+      - name: contact_info
+        description: "Supplier contact information"
+        tests:
+          - not_null:
+              severity: warn
+          - accepted_values:
+              values: ['phone', 'email', 'address']
+              severity: warn
+
+  - name: dim_inv_stores
+    description: "Store dimension with manager info"
+    columns:
+      - name: store_id
+        description: "Unique store identifier"
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: store_name
+        description: "Name of the store"
+        tests:
+          - not_null:
+              severity: warn
+      - name: location
+        description: "Geographic location of the store"
+        tests:
+          - not_null:
+              severity: warn
+      - name: manager_name
+        description: "Name of the store manager"
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_employees')
+              field: name
+              severity: warn
+
+  - name: dim_inv_products
+    description: "Product dimension enriched with categories, brands, and suppliers"
+    columns:
+      - name: product_id
+        description: "Unique product identifier"
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: product_name
+        description: "Name of the product"
+        tests:
+          - not_null:
+              severity: warn
+      - name: category_name
+        description: "Product category"
+        tests:
+          - not_null:
+              severity: warn
+      - name: brand_name
+        description: "Brand of the product"
+        tests:
+          - not_null:
+              severity: warn
+      - name: supplier_name
+        description: "Name of the supplier providing the product"
+        tests:
+          - not_null:
+              severity: warn
+      - name: price
+        description: "Unit price of the product"
+        tests:
+          - not_null:
+              severity: warn
+      - name: season
+        description: "Season of the product (if applicable)"
+
+    # ===================== MARKETING & CAMPAIGNS =====================
+  - name: fact_marketing_sales
+    description: "Fact table aggregating sales with discount rules and product/customer attributes"
+    columns:
+      - name: sales_key
+        description: "Synthetic primary key (transaction_id + item_id)"
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: transaction_id
+        description: "Reference to sales transaction"
+        tests:
+          - not_null:
+              severity: warn
+      - name: customer_id
+        description: "FK to dim_mkt_customers"
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('dim_mkt_customers')
+              field: customer_id
+              severity: warn
+      - name: store_id
+        description: "FK to dim_mkt_stores"
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('dim_mkt_stores')
+              field: store_id
+              severity: warn
+      - name: product_id
+        description: "FK to dim_mkt_products"
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('dim_mkt_products')
+              field: product_id
+              severity: warn
+      - name: transaction_date
+        description: "FK to dim_mkt_date"
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('dim_mkt_date')
+              field: date_id
+              severity: warn
+      - name: discount_rule_id
+        description: "FK to dim_discount_rules"
+        tests:
+          - relationships:
+              to: ref('dim_discount_rules')
+              field: rule_id
+              severity: warn
+
+  - name: dim_mkt_stores
+    description: "Marketing stores dimension"
+    columns:
+      - name: store_id
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: store_name
+        tests:
+          - not_null:
+              severity: warn
+      - name: location
+
+  - name: dim_mkt_products
+    description: "Marketing products dimension with category/brand"
+    columns:
+      - name: product_id
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: product_name
+        tests:
+          - not_null:
+              severity: warn
+      - name: category_name
+      - name: brand_name
+      - name: season
+
+  - name: dim_mkt_date
+    description: "Calendar dimension for sales transactions"
+    columns:
+      - name: date_id
+        description: "Primary key for date dimension"
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: year
+        tests:
+          - not_null:
+              severity: warn
+      - name: quarter
+      - name: month
+      - name: month_name
+      - name: day_of_month
+      - name: day_of_week
+      - name: day_name
+      - name: week_of_year
+      - name: is_weekend
+
+  - name: dim_mkt_customers
+    description: "Marketing customers with loyalty programs"
+    columns:
+      - name: customer_id
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: name
+        tests:
+          - not_null:
+              severity: warn
+      - name: email
+        tests:
+          - not_null:
+              severity: warn
+      - name: loyalty_program_id
+        description: "FK to loyalty program"
+      - name: loyalty_program_name
+      - name: loyalty_tier
+      - name: customer_since
+        tests:
+          - not_null:
+              severity: warn
+
+  - name: dim_discount_rules
+    description: "Discount rules dimension"
+    columns:
+      - name: rule_id
+        tests:
+          - not_null:
+              severity: warn
+      - name: product_id
+        description: "FK to dim_mkt_products"
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('dim_mkt_products')
+              field: product_id
+              severity: warn
+      - name: discount_type
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: status
+      - name: valid_from
+        tests:
+          - not_null:
+              severity: warn
+      - name: valid_to
+        tests:
+          - not_null:
+              severity: warn
+      - name: duration
+
+
+
+
+# ===================== SALES =====================
+  - name: fact_sales_items
+    description: "Fact table for sales items with transactions, products, customers, stores, employees."
+    columns:
+      - name: item_id
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: transaction_id
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_sales_transactions')
+              field: transaction_id
+              severity: warn
+      - name: product_id
+        tests:
+          - not_null:
+              severity: warn
+          - relationships:
+              to: ref('int_products')
+              field: product_id
+              severity: warn
+      - name: customer_id
+        tests:
+          - relationships:
+              to: ref('int_customers')
+              field: customer_id
+              severity: warn
+      - name: store_id
+        tests:
+          - relationships:
+              to: ref('int_stores')
+              field: store_id
+              severity: warn
+      - name: employee_id
+        tests:
+          - relationships:
+              to: ref('int_employees')
+              field: employee_id
+              severity: warn
+
+  - name: dim_stores
+    description: "Dimension table for stores and managers."
+    columns:
+      - name: store_id
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: manager_name
+        tests:
+          - not_null:
+              severity: warn
+
+  - name: dim_sales_date
+    description: "Date dimension extracted from sales transactions."
+    columns:
+      - name: date_id
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: year
+        tests:
+          - not_null:
+              severity: warn
+      - name: month
+        tests:
+          - not_null:
+              severity: warn
+
+  - name: dim_products
+    description: "Dimension table for products enriched with categories, brands, suppliers."
+    columns:
+      - name: product_id
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: category_name
+        tests:
+          - not_null:
+              severity: warn
+      - name: brand_name
+        tests:
+          - not_null:
+              severity: warn
+      - name: supplier_name
+        tests:
+          - not_null:
+              severity: warn
+
+  - name: dim_employees
+    description: "Dimension table for employees."
+    columns:
+      - name: employee_id
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: employee_name
+        tests:
+          - not_null:
+              severity: warn
+
+  - name: dim_customers
+    description: "Dimension table for customers enriched with loyalty programs."
+    columns:
+      - name: customer_id
+        tests:
+          - not_null:
+              severity: warn
+          - unique:
+              severity: warn
+      - name: customer_name
+        tests:
+          - not_null:
+              severity: warn
+      - name: email
+        tests:
+          - not_null:
+              severity: warn
+
+

@@ -1,12 +1,11 @@
 {{ config(
-    materialized='incremental',
-    unique_key = 'inventory_id',
-  
-    incremental_strategy = 'merge'
+    materialized='view'
 ) }}
 
 with source as (
-    select * from {{ ref('snapshot_inventory') }}
+    select * 
+    from {{ ref('snapshot_inventory') }}
+    where dbt_valid_to is null
 ),
 
 valid_inventory as (
@@ -14,15 +13,16 @@ valid_inventory as (
         inventory_id,
         store_id,
         product_id,
-        quantity,
-        last_updated
+        quantity::int as quantity,
+        last_updated,
+
+        case
+            when quantity is null or quantity = 0 then 'out_of_stock'
+            when quantity <= 10 then 'low_stock'
+            else 'in_stock'
+        end as status
+
     from source
-    where
-        inventory_id is not null
-        and store_id is not null
-        and product_id is not null
-        and quantity is not null and quantity >= 0
-        and last_updated is not null and last_updated <= current_timestamp
 )
 
 select * from valid_inventory

@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw_retails
-    schema: raw_retails_data  
+    schema: pos_raw_retails_data  
     database: airflow15          
     tables:
       - name: raw_brands
@@ -28,3 +28,4 @@ sources:
       - name: raw_pricing_history
       - name: raw_discount_rules
       - name: raw_tax_rules
+

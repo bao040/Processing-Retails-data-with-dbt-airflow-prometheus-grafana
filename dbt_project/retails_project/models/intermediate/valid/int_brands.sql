@@ -11,9 +11,6 @@ valid_brands as (
         brand_id,
         name
     from source
-    where
-        brand_id is not null
-        and name is not null
 )
 
 select * from valid_brands

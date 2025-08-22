@@ -4,6 +4,7 @@
 
 with source as (
     select * from {{ ref('snapshot_tax_rules') }}
+    where dbt_valid_to is null
 ),
 
 cleaned as (
@@ -11,7 +12,11 @@ cleaned as (
         tax_id,
         product_id,
         nullif(tax_rate, 'none') as tax_rate,
-        region
+        case 
+            when region in ('West', 'East', 'South', 'North') 
+                then region
+            else null
+        end as region
     from source
 ),
 
@@ -22,11 +27,6 @@ valid_rules as (
         tax_rate,
         region
     from cleaned
-    where
-        tax_id is not null
-        and product_id is not null
-        and tax_rate is not null and tax_rate::numeric >= 0
-        and region in ('West', 'East', 'South', 'North')
 )
 
 select * from valid_rules

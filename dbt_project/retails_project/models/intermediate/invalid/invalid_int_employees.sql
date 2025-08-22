@@ -43,7 +43,7 @@ invalid as (
                 err_store_id
             ], null),
             '; '
-        ) as error_reason
+        ) as invalid_description
     from flagged
     where
         err_employee_id is not null

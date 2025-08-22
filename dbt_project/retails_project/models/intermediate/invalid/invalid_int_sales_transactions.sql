@@ -58,7 +58,7 @@ invalid as (
                 err_payment
             ], null),
             '; '
-        ) as error_reason
+        ) as invalid_description
     from flagged
     where
         err_txn_id is not null

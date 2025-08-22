@@ -1,8 +1,5 @@
 {{ config(
-    materialized='incremental',
-    unique_key = 'payment_id',
-  
-    incremental_strategy = 'merge'
+    materialized='view'
 ) }}
 
 with source as (
@@ -16,12 +13,6 @@ valid_payments as (
         status,
         paid_at
     from source
-    where
-        payment_id is not null
-        and method is not null
-        and status in ('Pending', 'Completed')
-        and paid_at is not null
-        and paid_at <= current_date
 )
 
 select * from valid_payments

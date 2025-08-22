@@ -1,44 +1,26 @@
 {{ config(
-    materialized='incremental',
-    unique_key = 'feedback_id',
-  
-    incremental_strategy = 'merge'
+    materialized='view'
 ) }}
-
 
 with source as (
     select * from {{ ref('stg_customer_feedback') }}
 ),
 
--- Làm sạch dữ liệu trước khi lọc
 cleaned as (
     select
         feedback_id,
         customer_id,
         store_id,
         product_id,
-        -- Chuyển "bad" thành 0
+        -- Convert "bad" into 0
         case 
             when rating = 'bad' then 0
             else rating::int 
         end as rating,
-        comments,
+        trim(comments) as comments,
         feedback_date
     from source
-),
-
-valid_feedback as (
-    select *
-    from cleaned
-    where
-        feedback_id is not null
-        and customer_id is not null
-        and store_id is not null
-        and product_id is not null
-        and rating >= 0
-        and comments is not null
-        and feedback_date is not null
-        and feedback_date <= current_date
+    -- where feedback_date is null or feedback_date <= current_date  #add col to check feedback_date
 )
 
-select * from valid_feedback
+select * from cleaned

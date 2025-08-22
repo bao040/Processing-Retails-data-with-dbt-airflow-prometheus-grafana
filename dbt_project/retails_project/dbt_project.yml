@@ -35,6 +35,7 @@ models:
     staging:
       +schema: raw_retails_data    #nếu đặt sẽ bị trùng schema với profiles.yml
       +materialized: table
+      +tags: ['staging']
     # silver_cleaned:
     #   +schema: silver_retails_data
     #   +materialized: table
@@ -42,9 +43,15 @@ models:
       valid:
         +schema: silver_valid_data
         +materialized: table
+        +tags: ['intermediate']
       invalid:
         +schema: invalid_data
         +materialized: table
+        +tags: ['invalid']
+    marts:
+      +schema: delivery_data
+      +materialized: table
+      +tags: ['marts']
     
     
     

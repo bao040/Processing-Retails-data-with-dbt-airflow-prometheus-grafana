@@ -12,16 +12,10 @@ valid_shipments as (
         order_id,
         store_id,
         shipped_date,
-        received_date
+        received_date,
+        (received_date - shipped_date) as delivery_days
     from source
-    where
-        shipment_id is not null
-        and order_id is not null
-        and store_id is not null
-        and shipped_date is not null
-        and received_date is not null
-        and shipped_date <= current_date
-        and received_date <= shipped_date + interval '45 days'
 )
 
 select * from valid_shipments
+

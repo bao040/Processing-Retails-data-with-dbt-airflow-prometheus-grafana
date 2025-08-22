@@ -4,6 +4,7 @@
 
 with source as (
     select * from {{ ref('snapshot_suppliers') }}
+    where dbt_valid_to is null
 ),
 
 valid_suppliers as (
@@ -12,10 +13,6 @@ valid_suppliers as (
         name,
         contact_info
     from source
-    where
-        supplier_id is not null
-        and name is not null
-        and contact_info is not null
 )
 
 select * from valid_suppliers

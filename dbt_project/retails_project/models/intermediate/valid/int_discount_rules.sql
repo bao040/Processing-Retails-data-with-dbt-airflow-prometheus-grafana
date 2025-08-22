@@ -13,16 +13,25 @@ valid_rules as (
         discount_type,
         value,
         valid_from,
-        valid_to
+        valid_to,
+        
+        -- Valid duration
+        case
+            when valid_from is not null and valid_to is not null
+            then valid_to - valid_from
+            else null
+        end as duration,
+
+        -- Discount status
+        case
+            when valid_from is not null and current_date < valid_from then 'upcoming'
+            when valid_from is not null and valid_to is not null 
+                 and current_date between valid_from and valid_to then 'active'
+            when valid_to is not null and current_date > valid_to then 'expired'
+            else null
+        end as status
+
     from source
-    where
-        rule_id is not null
-        and product_id is not null
-        and discount_type in ('percentage', 'fixed')
-        and value is not null and value >= 0
-        and valid_from is not null
-        and valid_to is not null
-        and valid_from <= valid_to
 )
 
 select * from valid_rules
